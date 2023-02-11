@@ -1,17 +1,17 @@
 #from abc import ABC
-from enum import Enum
+from enum import Enum, auto
 
 class Rank(Enum):
-    pawn = 1
-    knight = 2
-    bishop = 3
-    rook = 4
-    queen = 5
-    king = 6
+    pawn = auto()
+    knight = auto()
+    bishop = auto()
+    rook = auto()
+    queen = auto()
+    king = auto()
 
 class Color(Enum):
-    white = 1
-    black = 2
+    white = auto()
+    black = auto()
 
 class Piece:
     def __init__(self, col: int, row: int, rank: Rank, color: Color):
