@@ -29,7 +29,7 @@ def initializeFromFEN(fenstring: str) -> list[Union[None, Piece]]:
 
         # FEN starts from black side of board,
         # but algebraic notation starts from white
-        board[p] = Piece(p % 8, 7 - p // 8, rank, color)
+        board[p] = Piece(rank, color)
         p += 1
 
     return board
