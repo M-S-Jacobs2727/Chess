@@ -165,7 +165,34 @@ def getLegalMoves(pieces: Pieces, playerColor: Color, p=-1) -> set[str]:
     return legalMoves
 
 
-def makeMove(pieces: Pieces, playerColor: Color, move: str):
+def isaMove(pieces: Pieces, moveFrom: int, moveTo: int, lastMoveFrom: int, lastMoveTo: int):
+    piece = pieces[moveFrom]
+    piece_row = moveFrom // 8
+    piece_col = moveFrom % 8
+    if piece.rank == Rank.knight:
+        if abs(moveFrom - moveTo) not in [6, 10, 15, 17]:
+            return False
+    elif piece.rank == Rank.king:
+        if abs(moveFrom - moveTo) not in [1, 7, 8, 9]:
+            return False
+        tmp_pieces = pieces.copy()
+        tmp_pieces[moveTo] = Piece(Rank.king, piece.color)
+        tmp_pieces[moveFrom] = None
+        if inCheck(tmp_pieces, piece.color):
+            return False
+    elif piece.rank == Rank.rook:
+        pass
+    elif piece.rank == Rank.bishop:
+        pass
+    elif piece.rank == Rank.queen:
+        pass
+    else:  # pawn
+        pass  # most complicated...
+
+    return True
+
+
+def makeMove(pieces: Pieces, oldIndex: int, newIndex: int):
     pass
 
 
