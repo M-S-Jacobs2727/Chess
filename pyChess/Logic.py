@@ -153,9 +153,10 @@ def inCheck(pieces: Pieces, playerColor: Color):
         if (
             col_range[0] <= king_col <= col_range[1]
             and row_range[0] <= king_row <= row_range[1]
-            and pieces[king_index + offset].rank == Rank.knight
+            and pieces[king_index + offset]
         ):
-            return True
+            if pieces[king_index + offset].rank == Rank.knight:
+                return True
 
     return False
 
