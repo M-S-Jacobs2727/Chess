@@ -1,4 +1,4 @@
-from .Piece import Piece, Rank, Color
+from pyChess import Piece, Rank, Color
 from typing import Union
 
 
@@ -165,7 +165,9 @@ def getLegalMoves(pieces: Pieces, playerColor: Color, p=-1) -> set[str]:
     return legalMoves
 
 
-def isaMove(pieces: Pieces, moveFrom: int, moveTo: int, lastMoveFrom: int, lastMoveTo: int):
+def isaMove(
+    pieces: Pieces, moveFrom: int, moveTo: int, lastMoveFrom: int, lastMoveTo: int
+):
     piece = pieces[moveFrom]
     piece_row = moveFrom // 8
     piece_col = moveFrom % 8
