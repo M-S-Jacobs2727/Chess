@@ -3,6 +3,65 @@ import pyChess
 from pyChess import Rank, Color
 
 
+class TestInCheck(unittest.TestCase):
+    def setUp(self) -> None:
+        self.pieces = [None for _ in range(64)]
+
+    def testInCheckRook1(self):
+        self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[33] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertTrue(
+            pyChess.inCheck(self.pieces, Color.black),
+            "Black king should be in check by rook",
+        )
+
+    def testInCheckRook2(self):
+        self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[40] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertTrue(
+            pyChess.inCheck(self.pieces, Color.black),
+            "Black king should be in check by rook",
+        )
+
+    def testInCheckRook3(self):
+        self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[48] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertTrue(
+            pyChess.inCheck(self.pieces, Color.black),
+            "Black king should be in check by rook",
+        )
+
+    def testInCheckRook4(self):
+        self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[39] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertTrue(
+            pyChess.inCheck(self.pieces, Color.black),
+            "Black king should be in check by rook",
+        )
+
+    def testNotInCheckRook1(self):
+        self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[31] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertFalse(
+            pyChess.inCheck(self.pieces, Color.black),
+            "Black king is in check from previous row",
+        )
+
+    def testNotInCheckRook1(self):
+        self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[39] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertFalse(
+            pyChess.inCheck(self.pieces, Color.white),
+            "White king is in check from nothing",
+        )
+
+
 class TestFENSetup(unittest.TestCase):
     def setUp(self) -> None:
         self.pieces = pyChess.initializeFromFEN(
@@ -47,7 +106,6 @@ class TestFENSetup(unittest.TestCase):
 
     def testEmptySquare(self):
         self.assertIsNone(self.pieces[20])
-
 
 
 # self.fenstring2 = "rnbq1bnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
