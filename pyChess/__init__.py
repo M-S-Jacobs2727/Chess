@@ -1,3 +1,4 @@
+from .Piece import Piece, Color, Rank
 from .Logic import (
     initializeFromFEN,
     inCheck,
@@ -7,4 +8,3 @@ from .Logic import (
     getLegalMoves,
     setup,
 )
-from .Piece import Piece, Color, Rank
