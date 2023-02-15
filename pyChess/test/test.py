@@ -9,7 +9,7 @@ class TestInCheck(unittest.TestCase):
 
     def testInCheckRook1(self):
         self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
-        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
         self.pieces[33] = pyChess.Piece(Rank.rook, Color.white)
         self.assertTrue(
             pyChess.inCheck(self.pieces, Color.black),
@@ -18,8 +18,8 @@ class TestInCheck(unittest.TestCase):
 
     def testInCheckRook2(self):
         self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
-        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
-        self.pieces[40] = pyChess.Piece(Rank.rook, Color.white)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[43] = pyChess.Piece(Rank.rook, Color.white)
         self.assertTrue(
             pyChess.inCheck(self.pieces, Color.black),
             "Black king should be in check by rook",
@@ -27,8 +27,8 @@ class TestInCheck(unittest.TestCase):
 
     def testInCheckRook3(self):
         self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
-        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
-        self.pieces[48] = pyChess.Piece(Rank.rook, Color.white)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[59] = pyChess.Piece(Rank.rook, Color.white)
         self.assertTrue(
             pyChess.inCheck(self.pieces, Color.black),
             "Black king should be in check by rook",
@@ -36,7 +36,7 @@ class TestInCheck(unittest.TestCase):
 
     def testInCheckRook4(self):
         self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
-        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
         self.pieces[39] = pyChess.Piece(Rank.rook, Color.white)
         self.assertTrue(
             pyChess.inCheck(self.pieces, Color.black),
@@ -45,20 +45,47 @@ class TestInCheck(unittest.TestCase):
 
     def testNotInCheckRook1(self):
         self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
-        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
         self.pieces[31] = pyChess.Piece(Rank.rook, Color.white)
         self.assertFalse(
             pyChess.inCheck(self.pieces, Color.black),
             "Black king is in check from previous row",
         )
 
-    def testNotInCheckRook1(self):
+    def testNotInCheckRook2(self):
         self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
-        self.pieces[32] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
         self.pieces[39] = pyChess.Piece(Rank.rook, Color.white)
         self.assertFalse(
             pyChess.inCheck(self.pieces, Color.white),
             "White king is in check from nothing",
+        )
+
+    def testNotInCheckRook3(self):
+        self.pieces[37] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[39] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertFalse(
+            pyChess.inCheck(self.pieces, Color.black),
+            "Black king is in check from blocked rook",
+        )
+
+    def testNotInCheckRook4(self):
+        self.pieces[19] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[3] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertFalse(
+            pyChess.inCheck(self.pieces, Color.white),
+            "Black king is in check from blocked rook",
+        )
+
+    def testNotInCheckRook5(self):
+        self.pieces[0] = pyChess.Piece(Rank.king, Color.white)
+        self.pieces[35] = pyChess.Piece(Rank.king, Color.black)
+        self.pieces[45] = pyChess.Piece(Rank.rook, Color.white)
+        self.assertFalse(
+            pyChess.inCheck(self.pieces, Color.white),
+            "Black king is in check from rook a knight's move away",
         )
 
 
