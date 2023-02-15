@@ -1,4 +1,5 @@
 from pyChess import Piece, Rank, Color
+import re
 from typing import Union
 
 
@@ -10,8 +11,54 @@ def checkValidBoard(board: Board) -> None:
 
 
 def checkValidFENString(fenstring: str) -> None:
-    pass
+    splitstring = fenstring.split()
+    if len(splitstring) != 1 and len(splitstring) != 6:
+        raise SyntaxError(f"Invalid number of fields in FEN string: {len(splitstring)}. Should be 1 or 6.")
+    boardonly = len(splitstring) == 1
+    if boardonly:
+        boardstring = splitstring[0]
+        turncolor = castle = enpassant = halfturn = fullturn = None
+    else:
+        boardstring, turncolor, castle, enpassant, halfturn, fullturn = splitstring
 
+    rows = boardstring.split("/")
+    if len(rows) != 8:
+        raise SyntaxError(f"Invalid number of rows in FEN string: {len(rows)}. Should be 8.")
+    numblackkings = 0
+    numwhitekings = 0
+    for row in rows:
+        counter = 0
+        for c in row:
+            if c.upper() in "PNBQR":
+                counter += 1
+            elif c in "12345678":
+                counter += int(c)
+            elif c == "k":
+                counter += 1
+                numblackkings += 1
+            elif c == "K":
+                counter += 1
+                numwhitekings += 1
+            else:
+                raise SyntaxError(f"Invalid character in FEN string: `{c}`")
+        
+        if counter != 8:
+            raise SyntaxError(f"Invalid number of columns in row: {row}. Should be 8, found {counter}.")
+    if numblackkings != 1 or numwhitekings != 1:
+        raise ValueError(f"Wrong number of kings found in FEN string. Should be 1 black and 1 white, found {numblackkings} black and {numwhitekings} white.")
+    
+    if not boardonly:
+        if turncolor not in "wb" or len(turncolor) != 1:
+            raise SyntaxError(f"Invalid turn color character, should be 'w' or 'b', found '{turncolor}'.")
+        if not re.fullmatch(r"(K?Q?k?q?|-)", castle):
+            raise SyntaxError(f"Invalid castle availablity in FEN string. Should be subset of 'KQkq' or '-', found '{castle}'.")
+        if not re.fullmatch(r"([a-h][36]|-)", enpassant):
+            raise SyntaxError(f"Invalid en passant target in FEN string. Should be a square on the 3rd or 6th rank, or '-', found '{enpassant}'.")
+        if not re.fullmatch(r"[0-9]+", halfturn):
+            raise SyntaxError(f"Invalid half-turn clock. Should be an integer, found '{halfturn}'.")
+        if not re.fullmatch(r"[1-9][0-9]*", fullturn):
+            raise SyntaxError(f"Invalid full-turn clock. Should be an integer, found '{fullturn}'.")
+    
 
 def initializeFromFEN(fenstring: str) -> Board:
     checkValidFENString(fenstring)
