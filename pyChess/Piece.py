@@ -1,6 +1,6 @@
 # from abc import ABC
 from collections import namedtuple
-from enum import Enum, auto
+from enum import Enum, IntEnum, auto
 
 
 Piece = namedtuple("Piece", ["rank", "color"])
@@ -15,9 +15,9 @@ class Rank(Enum):
     king = auto()
 
 
-class Color(Enum):
-    white = auto()
-    black = auto()
+class Color(IntEnum):
+    white = 1
+    black = 2
 
 
 # class Piece:

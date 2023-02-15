@@ -1,12 +1,31 @@
 from pyChess import Piece, Rank, Color
+from collections import namedtuple
+from dataclasses import dataclass, field
 import re
-from typing import Union
+from typing import Union, Optional
 
 
 Board = list[Union[None, Piece]]
 
 
+def emptyBoard() -> Board:
+    return [None for _ in range(64)]
+
+
+@dataclass(order=True)
+class GameState:
+    fullturn: int = field(default=1)
+    turn: Color = field(default=Color.white)
+    board: Board = field(compare=False, default_factory=emptyBoard)
+    castleavail: int = field(compare=False, default=15)
+    enpassant: int = field(compare=False, default=-1)
+    halfturn: int = field(compare=False, default=0)
+
+
 def checkValidBoard(board: Board) -> None:
+    """Checks if both kings are in check, if there are pawns on the 1st or 8th ranks,
+    or if the kings are touching.
+    """
     pass
 
 
@@ -83,7 +102,7 @@ def checkValidFENString(fenstring: str) -> None:
             )
 
 
-def initializeFromFEN(fenstring: str) -> Board:
+def initializeFromFEN(fenstring: str) -> GameState:
     checkValidFENString(fenstring)
     board: Board = [None for _ in range(64)]
     char2rank = {
@@ -95,8 +114,9 @@ def initializeFromFEN(fenstring: str) -> Board:
         "K": Rank.king,
     }
 
+    splitstring = fenstring.split()
     p = 0
-    for c in fenstring.split()[0]:
+    for c in splitstring[0]:
         if c in "12345678":
             p += int(c)
         elif c != "/":
@@ -107,8 +127,31 @@ def initializeFromFEN(fenstring: str) -> Board:
             p += 1
 
     checkValidBoard(board)
+    if len(splitstring) > 1:
+        turn = Color.white if splitstring[1] == "w" else Color.black
+        castleavail = 0
+        for i, c in "KQkq":
+            if c in splitstring[2]:
+                castleavail += 2**i
+        if splitstring[3] == "-":
+            enpassant = -1
+        else:
+            square = splitstring[3]
+            enpassant = -8 * (int(square[1])) + ord(square[0].upper()) - 1
+        halfturn = int(splitstring[4])
+        fullturn = int(splitstring[5])
+        state = GameState(
+            board=board,
+            turn=turn,
+            castleavail=castleavail,
+            enpassant=enpassant,
+            halfturn=halfturn,
+            fullturn=fullturn,
+        )
+    else:
+        state = GameState(board=board)
 
-    return board
+    return state
 
 
 def checkDirection(
@@ -229,10 +272,10 @@ def getLegalMoves(pieces: Board, playerColor: Color, p=-1) -> set[str]:
     return legalMoves
 
 
-def isaMove(
-    pieces: Board, moveFrom: int, moveTo: int, lastMoveFrom: int, lastMoveTo: int
-):
+def isaMove(pieces: Board, moveFrom: int, moveTo: int, enpassanttarget: Optional[int]):
     piece = pieces[moveFrom]
+    if piece is None:
+        return False
     piece_row = moveFrom // 8
     piece_col = moveFrom % 8
     if piece.rank == Rank.knight:
@@ -258,8 +301,15 @@ def isaMove(
     return True
 
 
-def makeMove(pieces: Board, oldIndex: int, newIndex: int):
-    pass
+def makeMove(board: Board, moveFrom: int, moveTo: int, enpassanttarget: Optional[int]):
+    if isaMove(board, moveFrom, moveTo, enpassanttarget):
+        board[moveTo] = board[moveFrom]
+        board[moveFrom] = None
+        if board[moveTo].rank == Rank.pawn and abs(moveTo - moveFrom) == 16:
+            enpassanttarget = (moveFrom + moveTo) // 2
+        else:
+            enpassanttarget = None
+    return (board, enpassanttarget)
 
 
 def setup():
