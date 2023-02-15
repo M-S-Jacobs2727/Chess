@@ -13,7 +13,9 @@ def checkValidBoard(board: Board) -> None:
 def checkValidFENString(fenstring: str) -> None:
     splitstring = fenstring.split()
     if len(splitstring) != 1 and len(splitstring) != 6:
-        raise SyntaxError(f"Invalid number of fields in FEN string: {len(splitstring)}. Should be 1 or 6.")
+        raise SyntaxError(
+            f"Invalid number of fields in FEN string: {len(splitstring)}. Should be 1 or 6."
+        )
     boardonly = len(splitstring) == 1
     if boardonly:
         boardstring = splitstring[0]
@@ -23,7 +25,9 @@ def checkValidFENString(fenstring: str) -> None:
 
     rows = boardstring.split("/")
     if len(rows) != 8:
-        raise SyntaxError(f"Invalid number of rows in FEN string: {len(rows)}. Should be 8.")
+        raise SyntaxError(
+            f"Invalid number of rows in FEN string: {len(rows)}. Should be 8."
+        )
     numblackkings = 0
     numwhitekings = 0
     for row in rows:
@@ -41,24 +45,43 @@ def checkValidFENString(fenstring: str) -> None:
                 numwhitekings += 1
             else:
                 raise SyntaxError(f"Invalid character in FEN string: `{c}`")
-        
+
         if counter != 8:
-            raise SyntaxError(f"Invalid number of columns in row: {row}. Should be 8, found {counter}.")
+            raise SyntaxError(
+                f"Invalid number of columns in row: {row}."
+                f" Should be 8, found {counter}."
+            )
     if numblackkings != 1 or numwhitekings != 1:
-        raise ValueError(f"Wrong number of kings found in FEN string. Should be 1 black and 1 white, found {numblackkings} black and {numwhitekings} white.")
-    
+        raise ValueError(
+            "Wrong number of kings found in FEN string. Should be 1 black and 1 white,"
+            f" found {numblackkings} black and {numwhitekings} white."
+        )
+
     if not boardonly:
         if turncolor not in "wb" or len(turncolor) != 1:
-            raise SyntaxError(f"Invalid turn color character, should be 'w' or 'b', found '{turncolor}'.")
+            raise SyntaxError(
+                "Invalid turn color character, should be 'w' or 'b',"
+                f" found '{turncolor}'."
+            )
         if not re.fullmatch(r"(K?Q?k?q?|-)", castle):
-            raise SyntaxError(f"Invalid castle availablity in FEN string. Should be subset of 'KQkq' or '-', found '{castle}'.")
+            raise SyntaxError(
+                "Invalid castle availablity in FEN string. Should be subset of"
+                f" 'KQkq' or '-', found '{castle}'."
+            )
         if not re.fullmatch(r"([a-h][36]|-)", enpassant):
-            raise SyntaxError(f"Invalid en passant target in FEN string. Should be a square on the 3rd or 6th rank, or '-', found '{enpassant}'.")
+            raise SyntaxError(
+                "Invalid en passant target in FEN string. Should be a square on the"
+                f" 3rd or 6th rank, or '-', found '{enpassant}'."
+            )
         if not re.fullmatch(r"[0-9]+", halfturn):
-            raise SyntaxError(f"Invalid half-turn clock. Should be an integer, found '{halfturn}'.")
+            raise SyntaxError(
+                f"Invalid half-turn clock. Should be an integer, found '{halfturn}'."
+            )
         if not re.fullmatch(r"[1-9][0-9]*", fullturn):
-            raise SyntaxError(f"Invalid full-turn clock. Should be an integer, found '{fullturn}'.")
-    
+            raise SyntaxError(
+                f"Invalid full-turn clock. Should be an integer, found '{fullturn}'."
+            )
+
 
 def initializeFromFEN(fenstring: str) -> Board:
     checkValidFENString(fenstring)
@@ -74,23 +97,15 @@ def initializeFromFEN(fenstring: str) -> Board:
 
     p = 0
     for c in fenstring.split()[0]:
-        if c == "/":
-            continue
         if c in "12345678":
             p += int(c)
-            continue
+        elif c != "/":
+            color = Color.white if c.isupper() else Color.black
+            rank = char2rank[c.upper()]
 
-        if c not in "PNBRQKpnbrqk":
-            raise ValueError(f"Invalid character in FEN string: `{c}`")
+            board[p] = Piece(rank, color)
+            p += 1
 
-        color = Color.white if c.isupper() else Color.black
-        rank = char2rank[c.upper()]
-
-        # FEN starts from black side of board,
-        # but algebraic notation starts from white
-        board[p] = Piece(rank, color)
-        p += 1
-    
     checkValidBoard(board)
 
     return board
@@ -108,7 +123,7 @@ def checkDirection(
     piece = board[king_index + increment]
     while piece is None and i < niters:
         i += 1
-        piece = board[king_index + increment*i]
+        piece = board[king_index + increment * i]
     if piece is None:
         return False
     return piece.rank in attackingPieces and piece.color != playerColor
@@ -123,29 +138,21 @@ def inCheck(board: Board, playerColor: Color):
     king_col = king_index % 8
     king_row = king_index // 8
 
-    lateral_pieces = {Rank.queen, Rank.rook}
+    lat_pieces = {Rank.queen, Rank.rook}
     if king_col != 7:
-        if checkDirection(
-            board, 7 - king_col, 1, king_index, lateral_pieces, playerColor
-        ):
+        if checkDirection(board, 7 - king_col, 1, king_index, lat_pieces, playerColor):
             return True
 
     if king_col != 0:
-        if checkDirection(
-            board, king_col, -1, king_index, lateral_pieces, playerColor
-        ):
+        if checkDirection(board, king_col, -1, king_index, lat_pieces, playerColor):
             return True
 
     if king_row != 7:
-        if checkDirection(
-            board, 7 - king_row, 8, king_index, lateral_pieces, playerColor
-        ):
+        if checkDirection(board, 7 - king_row, 8, king_index, lat_pieces, playerColor):
             return True
 
     if king_row != 0:
-        if checkDirection(
-            board, king_row, -8, king_index, lateral_pieces, playerColor
-        ):
+        if checkDirection(board, king_row, -8, king_index, lat_pieces, playerColor):
             return True
 
     diagonal_pieces = {Rank.queen, Rank.bishop}
