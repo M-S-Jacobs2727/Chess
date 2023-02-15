@@ -5,8 +5,17 @@ from typing import Union
 Board = list[Union[None, Piece]]
 
 
+def checkValidBoard(board: Board) -> None:
+    pass
+
+
+def checkValidFENString(fenstring: str) -> None:
+    pass
+
+
 def initializeFromFEN(fenstring: str) -> Board:
-    pieces = [None for _ in range(64)]
+    checkValidFENString(fenstring)
+    board: Board = [None for _ in range(64)]
     char2rank = {
         "P": Rank.pawn,
         "N": Rank.knight,
@@ -32,10 +41,12 @@ def initializeFromFEN(fenstring: str) -> Board:
 
         # FEN starts from black side of board,
         # but algebraic notation starts from white
-        pieces[p] = Piece(rank, color)
+        board[p] = Piece(rank, color)
         p += 1
+    
+    checkValidBoard(board)
 
-    return pieces
+    return board
 
 
 def checkDirection(
