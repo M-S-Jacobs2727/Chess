@@ -1,8 +1,6 @@
 from .Piece import Piece, Color, Rank
+from .Board import Board
 from .Logic import (
-    initializeFromFEN,
-    inCheck,
-    checkDirection,
     isaMove,
     makeMove,
     getLegalMoves,
