@@ -16,8 +16,8 @@ class Rank(Enum):
 
 
 class Color(IntEnum):
-    white = 1
-    black = 2
+    white = -1
+    black = 1
 
 
 # class Piece:
